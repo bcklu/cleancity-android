@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Uploader!</string>
+    <string name="uploader_intro">Take a picture and report a problem:</string>
     <string name="app_name">CleanCity</string>
+<string name="uploader_fotobutton">Take picture</string>
+<string name="uploader_send">Report it!</string>
+<string name="uploader_description">Descripte the problem..</string>
 </resources>
