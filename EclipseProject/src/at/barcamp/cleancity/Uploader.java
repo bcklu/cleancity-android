@@ -5,11 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -43,12 +45,20 @@ public class Uploader extends Activity implements LocationListener{
 	
 	// error-flags
 	private static final int TAKE_PICTURE = 0;
+
+	// REST API Server
+	private static String SERVER_URL = "http://cleancity.dyndns.org/1/incident_reports";
 	
 	// scale image to...
 	private static final int width = 640;
 	private static final int heigh = 480;
 	
+	// ocation stuff..
 	LocationManager locationManager;
+	double dlat;
+	double dlng;
+	
+	private String accessToken;
 	
     /** Called when the activity is first created. */
     @Override
@@ -60,6 +70,10 @@ public class Uploader extends Activity implements LocationListener{
         send = (Button)findViewById(R.id.uploader_send); 
         desc = (EditText)findViewById(R.id.uploader_desc);
         image = (ImageView)findViewById(R.id.uploader_image);
+        
+        // get facebook credentials...
+        SharedPreferences savedSession = this.getSharedPreferences("facebook-session", Context.MODE_PRIVATE);
+        accessToken = savedSession.getString("access_token", null);
         
         // set GPS...
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -73,11 +87,30 @@ public class Uploader extends Activity implements LocationListener{
 				// open camera view here
 				takePhoto(arg0);
 			} 
-        });
+        }); 
+        
+        send.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				// open camera view here
+				try {
+					RequestHandler.SendReport(SERVER_URL, imageUrl, desc.getText().toString(), dlat, dlng, accessToken);
+				} catch (JSONException e) {
+					Log.e("UPLOADER", e.getMessage());
+				} catch (IOException e) {
+					Log.e("UPLOADER", e.getMessage());
+				}
+			} 
+        }); 
         
     }
-   
     
+    // close the activity properly
+    @Override
+	public void onBackPressed() {
+		this.finish();
+	}
+   
+    // take the picture...
     public void takePhoto(View view) {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
@@ -87,6 +120,7 @@ public class Uploader extends Activity implements LocationListener{
         startActivityForResult(intent, TAKE_PICTURE);
     }
     
+    // when the picture was taken...
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -96,13 +130,23 @@ public class Uploader extends Activity implements LocationListener{
                 Uri selectedImage = imageUri;
                 getContentResolver().notifyChange(selectedImage, null);
                 
+                // do the scaling...
                 Bitmap bitm = BitmapFactory.decodeFile(imageUrl);
                 
                 int origWidth = bitm.getWidth();
                 int origHeight = bitm.getHeight();
                 
-                float scaleWidth = ((float) width) / origWidth;
-                float scaleHeight = ((float) heigh) / origHeight;
+                float scaleWidth;
+                float scaleHeight;
+                
+                // calculate scale-values..
+                if (origWidth > origHeight) { // wide!
+	                scaleWidth = ((float) width) / origWidth;
+	                scaleHeight = scaleWidth;
+                } else { // high!
+                	scaleHeight = ((float) heigh) / origHeight;
+                	scaleWidth = scaleHeight;
+                } 
                 
                 Matrix matrix = new Matrix();
                 
@@ -124,23 +168,20 @@ public class Uploader extends Activity implements LocationListener{
 					}
 				}
                 
-                //File f = new File(imageUri.toString());
+                // append to GUI
                 Drawable d = Drawable.createFromPath(imageUrl);
                 image.setImageDrawable(d);
-//                image.postInvalidate();
             }
         }
     }
 
 	public void onLocationChanged(Location location) {
 		if (location != null) {
-			double dlat = location.getLatitude();
-			double dlng = location.getLongitude();
+			dlat = location.getLatitude();
+			dlng = location.getLongitude();
 //			int lat = (int) (location.getLatitude() * 1000000);
 //			int lng = (int) (location.getLongitude() * 1000000);
 			
-			String test = "(" + dlat + " / " + dlng + ")";
-	        desc.setText(test);
 		}
 	}
 

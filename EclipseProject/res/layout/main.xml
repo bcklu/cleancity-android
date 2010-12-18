@@ -8,7 +8,7 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" android:text="@string/uploader_intro"/>
 
-<ImageView android:layout_width="100px" android:layout_height="100px" android:id="@+id/uploader_image"></ImageView>
+<ImageView android:layout_width="300px" android:layout_height="300px" android:id="@+id/uploader_image"></ImageView>
 
 <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/uploader_fotobutton" android:id="@+id/uploader_picture"></Button>
 
