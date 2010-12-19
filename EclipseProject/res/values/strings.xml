@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="uploader_intro">Take a picture and report a problem:</string>
+    <string name="uploader_intro">Take a picture and report a incident:</string>
     <string name="app_name">CleanCity</string>
 <string name="uploader_fotobutton">Take picture</string>
 <string name="uploader_send">Report it!</string>
-<string name="uploader_description">Descripte the problem..</string>
+<string name="uploader_description">Descripte the incident..</string>
+<string name="uploader_sending">Reporting incident...</string>
+<string name="label_ok">OK</string>
+<string name="uploader_sended">Success!</string>
+<string name="uploader_error_noPic">Please take a picture first.</string>
+<string name="uploader_error_noDesc">Please enter a incident-description first.</string>
+<string name="uploader_error_noPic_noDesc">Please take a picture and enter a incident-description first.</string>
 </resources>
