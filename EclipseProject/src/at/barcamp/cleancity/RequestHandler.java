@@ -15,8 +15,8 @@ import android.util.Log;
 
 public class RequestHandler {
 	
-	public static void SendReport(String url, String imagePath, String description, double lat, double lng, String authorId) throws JSONException, IOException{
-		Post(url,buildJSON(encodeFile(imagePath),description,lat, lng, authorId));
+	public static void SendReport(String url, String imagePath, String description, double lat, double lng, String access_token, String userId) throws JSONException, IOException{
+		Post(url,buildJSON(encodeFile(imagePath),description,lat, lng, access_token, userId));
 	}
 	
 	private static void Post(String url, JSONObject data){
@@ -64,15 +64,16 @@ public class RequestHandler {
     	return Base64.encodeBytes(b);
     }
 	
-	private static JSONObject buildJSON(String image, String desc, double lat, double lng, String authorId) throws JSONException{    	
+	private static JSONObject buildJSON(String image, String desc, double lat, double lng, String access_token, String userId) throws JSONException{    	
     	JSONObject json = new JSONObject();
     	JSONObject report = new JSONObject();
     	
-    	report.put("author_id", authorId); //TODO add Facebook ID
+    	report.put("os_info", userId); 
     	report.put("description", desc);
     	report.put("latitude", lat);
     	report.put("longitude", lng);
     	report.put("image", image);
+    	report.put("access_token", access_token);
     	
     	json.put("incident_report", report);
     	

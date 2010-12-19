@@ -16,13 +16,21 @@
 
 package at.barcamp.cleancity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
 import com.facebook.android.LoginButton;
 import com.facebook.android.SessionEvents;
 import com.facebook.android.SessionStore;
@@ -40,7 +48,7 @@ public class Login extends Activity {
     private LoginButton mLoginButton;
     private TextView mText;
 
-
+    public Login me = this;
     
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
@@ -62,11 +70,11 @@ public class Login extends Activity {
 
        	mFacebook = new Facebook(APP_ID);
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
-
+       	
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
-        mLoginButton.init(this, mFacebook);
+        mLoginButton.init(this, mFacebook, new String[] {"offline_access"});
         
         if (mFacebook.isSessionValid()) {
         	this.startUploader();

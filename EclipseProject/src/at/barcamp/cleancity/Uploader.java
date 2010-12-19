@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -67,7 +68,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
 	// facebook accessToken to send to server
 	private String accessToken = "";
 	// facebook user id to send to server
-	private String userId = "";
+	private String userId = "( " +Build.DISPLAY +" )";
 
 	// upload-progress-dialog
 	protected ProgressDialog dialog = null;
@@ -98,6 +99,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
         // get facebook credentials...
         SharedPreferences savedSession = this.getSharedPreferences("facebook-session", Context.MODE_PRIVATE);
         accessToken = savedSession.getString("access_token", null);
+        userId = savedSession.getString("userId", null);
         
         // set GPS...
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -115,9 +117,6 @@ public class Uploader extends Activity implements LocationListener, Runnable{
         
         send.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				
-				// FOR TESTING ONLY
-				me.picture_taken = true;
 				
 				if (me.desc.getText().length() <= 0) { // no desc
 					if (me.picture_taken) { // no desc but picture
@@ -230,8 +229,8 @@ public class Uploader extends Activity implements LocationListener, Runnable{
 			dlng = location.getLongitude();
 //			int lat = (int) (location.getLatitude() * 1000000);
 //			int lng = (int) (location.getLongitude() * 1000000);
-			TextView tv = (TextView) findViewById(R.id.txtTitle);
-			tv.setText(String.valueOf(dlat) + "-" + String.valueOf(dlng));
+//			TextView tv = (TextView) findViewById(R.id.txtTitle);
+//			tv.setText(String.valueOf(dlat) + "-" + String.valueOf(dlng));
 		}
 	}
 	
@@ -239,7 +238,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
 	public void run() {
 		boolean error = false;
 		try {
-			RequestHandler.SendReport(SERVER_URL, imageUrl, desc.getText().toString(), dlat, dlng, accessToken);
+			RequestHandler.SendReport(SERVER_URL, imageUrl, desc.getText().toString(), dlat, dlng, accessToken, userId);
 		} catch (JSONException e) {
 			Log.e("UPLOADER", e.getMessage());
 			GUITools.showOKDialog(me, e.getMessage());
