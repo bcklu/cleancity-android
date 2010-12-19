@@ -6,7 +6,8 @@
     >
 <TextView  
     android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" android:text="@string/uploader_intro"/>
+    android:layout_height="wrap_content" android:text="@string/uploader_intro"
+    android:id="@+id/txtTitle"/>
 
 <ImageView android:layout_width="300px" android:layout_height="300px" android:id="@+id/uploader_image"></ImageView>
 

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,13 +24,17 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class Uploader extends Activity implements LocationListener{
 	
@@ -59,6 +64,7 @@ public class Uploader extends Activity implements LocationListener{
 	double dlng;
 	
 	private String accessToken;
+	
 	
     /** Called when the activity is first created. */
     @Override
@@ -91,7 +97,6 @@ public class Uploader extends Activity implements LocationListener{
         
         send.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				// open camera view here
 				try {
 					RequestHandler.SendReport(SERVER_URL, imageUrl, desc.getText().toString(), dlat, dlng, accessToken);
 				} catch (JSONException e) {
@@ -109,11 +114,20 @@ public class Uploader extends Activity implements LocationListener{
 	public void onBackPressed() {
 		this.finish();
 	}
-   
+    
+    private File getTempFile(Context context){
+    	  //it will return /sdcard/image.tmp
+    	  final File path = new File( Environment.getExternalStorageDirectory(), context.getPackageName() );
+    	  if(!path.exists()){
+    	    path.mkdir();
+    	  }
+    	  return new File(path, "clearcity_tmp.tmp");
+    }
+    
     // take the picture...
     public void takePhoto(View view) {
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+    	Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+    	File photo = getTempFile(this);
         imageUrl = photo.getAbsolutePath();
         intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photo));
         imageUri = Uri.fromFile(photo);
@@ -132,6 +146,7 @@ public class Uploader extends Activity implements LocationListener{
                 
                 // do the scaling...
                 Bitmap bitm = BitmapFactory.decodeFile(imageUrl);
+                //Bitmap bitm = Media.getBitmap(getContentResolver(), Uri.fromFile(new File(imageUrl)) );
                 
                 int origWidth = bitm.getWidth();
                 int origHeight = bitm.getHeight();
@@ -181,7 +196,8 @@ public class Uploader extends Activity implements LocationListener{
 			dlng = location.getLongitude();
 //			int lat = (int) (location.getLatitude() * 1000000);
 //			int lng = (int) (location.getLongitude() * 1000000);
-			
+			TextView tv = (TextView) findViewById(R.id.txtTitle);
+			tv.setText(String.valueOf(dlat) + "-" + String.valueOf(dlng));
 		}
 	}
 
@@ -199,5 +215,6 @@ public class Uploader extends Activity implements LocationListener{
 		// TODO Auto-generated method stub
 		
 	}
+
 }
 
