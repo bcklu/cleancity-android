@@ -74,7 +74,9 @@ public class Login extends Activity {
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
-        mLoginButton.init(this, mFacebook, new String[] {"offline_access"});
+        
+        // Auth via facebook requesting the given permissions
+        mLoginButton.init(this, mFacebook, new String[] {"offline_access", "email"});
         
         if (mFacebook.isSessionValid()) {
         	this.startUploader();

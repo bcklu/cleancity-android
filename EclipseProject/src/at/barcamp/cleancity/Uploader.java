@@ -68,7 +68,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
 	// facebook accessToken to send to server
 	private String accessToken = "";
 	// facebook user id to send to server
-	private String userId = "( " +Build.DISPLAY +" )";
+	private String userId = "( " +Build.BRAND +" / " +Build.MANUFACTURER +" / " +Build.PRODUCT +" / " +Build.TAGS +" / " +Build.DEVICE +" )";
 
 	// upload-progress-dialog
 	protected ProgressDialog dialog = null;
@@ -99,7 +99,6 @@ public class Uploader extends Activity implements LocationListener, Runnable{
         // get facebook credentials...
         SharedPreferences savedSession = this.getSharedPreferences("facebook-session", Context.MODE_PRIVATE);
         accessToken = savedSession.getString("access_token", null);
-        userId = savedSession.getString("userId", null);
         
         // set GPS...
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
