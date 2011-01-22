@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -60,9 +61,11 @@ public class Login extends Activity {
 
         if (APP_ID == null) {
             Util.showAlert(this, "Warning", "Facebook Applicaton ID must be " +
-                    "specified before running this example: see Example.java");
+                    "specified before running.");
         }
         
+        // hide the android title bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);  
 
         setContentView(R.layout.login);
         mLoginButton = (LoginButton) findViewById(R.id.login);
@@ -93,7 +96,7 @@ public class Login extends Activity {
     public class SampleAuthListener implements AuthListener {
 
         public void onAuthSucceed() {
-            mText.setText("You have logged in! ");
+            mText.setText("You are logged in! ");
             
             // OPEN 2nd ACTIVITY HERE
             startUploader();
@@ -116,8 +119,18 @@ public class Login extends Activity {
         }
 
         public void onLogoutFinish() {
-            mText.setText("You have logged out! ");
+            mText.setText("");
         }
     }
+    
+ // close the activity properly
+    @Override
+	public void onBackPressed() {
+    	if (mFacebook.isSessionValid()) {
+        	this.startUploader();
+        } else {
+        	super.onBackPressed();
+        }
+	}
 
 }

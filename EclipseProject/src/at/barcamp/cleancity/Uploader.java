@@ -31,6 +31,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,7 +44,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
 	private String imageUrl;
 	
 	// controls..
-	private Button picture;
+	//private Button picture;
 	private EditText desc;
 	private Button send;
 	private Uri imageUri;
@@ -84,9 +85,13 @@ public class Uploader extends Activity implements LocationListener, Runnable{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
         
-        picture = (Button)findViewById(R.id.uploader_picture);
+        // hide the android title bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);  
+        
+        setContentView(R.layout.uploader);
+        
+        //picture = (Button)findViewById(R.id.uploader_picture);
         send = (Button)findViewById(R.id.uploader_send); 
         desc = (EditText)findViewById(R.id.uploader_desc);
         image = (ImageView)findViewById(R.id.uploader_image);
@@ -94,7 +99,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
         emptyImage = image;
         
         // set default image
-        me.image.setImageResource(android.R.drawable.ic_menu_camera);
+        me.image.setImageResource(R.drawable.schandfleck_icon);
         
         // get facebook credentials...
         SharedPreferences savedSession = this.getSharedPreferences("facebook-session", Context.MODE_PRIVATE);
@@ -107,7 +112,7 @@ public class Uploader extends Activity implements LocationListener, Runnable{
         String provider = locationManager.getBestProvider(c, true);
         locationManager.requestLocationUpdates(provider, 1000L, 500.0f, this);
 		
-        picture.setOnClickListener(new OnClickListener() {
+        image.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				// open camera view here
 				takePhoto(arg0);
@@ -257,7 +262,14 @@ public class Uploader extends Activity implements LocationListener, Runnable{
      		GUITools.showOKDialog(me, R.string.uploader_sended);
      		me.desc.setText("");
      		// reset image here
-     		me.image.setImageResource(android.R.drawable.ic_menu_camera);
+     		me.image.setImageResource(R.drawable.schandfleck_icon);
+     		
+     		// delete the picture
+     		try {
+     		File f = new File(imageUrl);
+     		f.delete();
+     		} catch(Exception ex) { }
+     		
      		me.picture_taken  = false;
          }
  };

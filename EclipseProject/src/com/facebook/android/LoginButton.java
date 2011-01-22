@@ -65,7 +65,7 @@ public class LoginButton extends ImageButton {
         setAdjustViewBounds(true);
         setImageResource(fb.isSessionValid() ?
                          R.drawable.logout_button : 
-                         R.drawable.login_button);
+                         R.drawable.facebook_login_button);
         drawableStateChanged();
         
         SessionEvents.addAuthListener(mSessionListener);
@@ -95,6 +95,7 @@ public class LoginButton extends ImageButton {
         public void onFacebookError(FacebookError error) {
             SessionEvents.onLoginError(error.getMessage());
         }
+        
         
         public void onError(DialogError error) {
             SessionEvents.onLoginError(error.getMessage());
@@ -132,7 +133,7 @@ public class LoginButton extends ImageButton {
         
         public void onLogoutFinish() {
             SessionStore.clear(getContext());
-            setImageResource(R.drawable.login_button);
+            setImageResource(R.drawable.facebook_login_button);
         }
     }
     
